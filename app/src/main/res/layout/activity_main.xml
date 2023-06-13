@@ -9,4 +9,10 @@
     android:background="@drawable/background"
     tools:context=".MainActivity">
 
+<!--    <View-->
+<!--        android:id="@+id/view1"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_weight="1" />-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

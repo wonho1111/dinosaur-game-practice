@@ -10,13 +10,14 @@ import android.animation.ValueAnimator;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity  {
     ImageView iv_gun;
-    ImageView iv_bullet;
+    ImageView iv_dino;
     ImageView iv_clay;
 
     double screen_width, screen_height;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     float bullet_center_x, bullet_center_y;
     float clay_center_x, clay_center_y;
     double gun_x, gun_y;
-    double bullet_x, bullet_y_before, bullet_y_after;
+    double dino_x, dino_y_before, dino_y_after;
     double gun_center_x;
 
     final int NO_OF_CLAYS = 5;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         screen_width = size.x;
         screen_height = size.y;
 
-        iv_bullet = new ImageView(this);
+        iv_dino = new ImageView(this);
         iv_gun    = new ImageView(this);
         iv_clay   = new ImageView(this);
 
@@ -54,17 +55,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gun_width = iv_gun.getMeasuredWidth();
         layout.addView(iv_gun);
 
-        iv_bullet.setImageResource(R.drawable.bullet);
-        iv_bullet.measure(iv_bullet.getMeasuredWidth(), iv_bullet.getMeasuredHeight());
-        bullet_height = iv_bullet.getMeasuredHeight();
-        bullet_width  = iv_bullet.getMeasuredWidth();
-        //iv_bullet.setVisibility(View.INVISIBLE);
-        layout.addView(iv_bullet);
+        iv_dino.setImageResource(R.drawable.dino1);
+        iv_dino.measure(iv_dino.getMeasuredWidth(), iv_dino.getMeasuredHeight());
+        bullet_height = iv_dino.getMeasuredHeight();
+        bullet_width  = iv_dino.getMeasuredWidth();
+        //iv_dino.setVisibility(View.INVISIBLE);
+        layout.addView(iv_dino);
 
         iv_clay.setImageResource(R.drawable.clay);
         iv_clay.setScaleX(0.8f);
         iv_clay.setScaleY(0.8f);
-        iv_clay.measure(iv_bullet.getMeasuredWidth(), iv_bullet.getMeasuredHeight());
+        iv_clay.measure(iv_dino.getMeasuredWidth(), iv_dino.getMeasuredHeight());
         clay_height = iv_clay.getMeasuredHeight();
         clay_width  = iv_clay.getMeasuredWidth();
         iv_clay.setVisibility(View.INVISIBLE);   // step 2
@@ -77,11 +78,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_gun.setY((float)gun_y - 100f);
 
 
-        bullet_x = screen_width * 0.1;
-        bullet_y_before = screen_height * 0.7;
-        bullet_y_after = screen_height * 0.1;
-        iv_bullet.setX((float)bullet_x);
-        iv_bullet.setY((float)(bullet_y_before));
+        dino_x = screen_width * 0.1;
+        dino_y_before = screen_height * 0.55;
+        dino_y_after = screen_height * 0.1;
+        iv_dino.setX((float)dino_x);
+        iv_dino.setY((float)(dino_y_before));
 
         ObjectAnimator clay_translateX = ObjectAnimator.ofFloat(iv_clay, "translationX", (float)screen_width + 100f, -200f);
         ObjectAnimator clay_translateY = ObjectAnimator.ofFloat(iv_clay, "translationY", 650f, 650f);
@@ -122,35 +123,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // step 2
         iv_gun.setClickable(true);
         // iv_gun.setFocusable(true);
-        iv_gun.setOnClickListener(this);
+        //iv_gun.setOnClickListener(this);
+        //implements View.OnClickListener
     }
     AnimatorSet bullet = new AnimatorSet();
     // step 2
+//    @Override
+//    public void onClick(View v) {
+//        ObjectAnimator bullet_translateX = ObjectAnimator.ofFloat(iv_dino, "translationX", (float)dino_x, (float)dino_x);
+//        ObjectAnimator bullet_translateY = ObjectAnimator.ofFloat(iv_dino, "translationY", (float)(dino_y_before), (float)(dino_y_after), (float)(dino_y_before));
+//
+//        bullet_translateY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                bullet_center_x = iv_dino.getX() + bullet_width*0.5f;
+//                bullet_center_y = iv_dino.getY() + bullet_height*0.5f;
+//
+//                clay_center_x = iv_clay.getX() + clay_width*0.5f;
+//                clay_center_y = iv_clay.getY() + clay_height*0.5f;
+//
+//                double dist = Math.sqrt(Math.pow(bullet_center_x - clay_center_x, 2) + Math.pow(bullet_center_y - clay_center_y, 2));
+//                if (dist <= 200) {
+//                    //iv_clay.setVisibility(View.INVISIBLE);
+//                    //bullet.end();
+//                    Toast.makeText(getApplicationContext(), "게임 종료!!", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        bullet.playTogether(bullet_translateX, bullet_translateY);
+//        bullet.setDuration(1300);
+//        bullet.start();
+//    }
+
     @Override
-    public void onClick(View v) {
-        ObjectAnimator bullet_translateX = ObjectAnimator.ofFloat(iv_bullet, "translationX", (float)bullet_x, (float)bullet_x);
-        ObjectAnimator bullet_translateY = ObjectAnimator.ofFloat(iv_bullet, "translationY", (float)(bullet_y_before), (float)(bullet_y_after), (float)(bullet_y_before));
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        int userAction = event.getAction();
+        switch (userAction) {
+            case MotionEvent.ACTION_DOWN:
+                ObjectAnimator bullet_translateX = ObjectAnimator.ofFloat(iv_dino, "translationX", (float)dino_x, (float)dino_x);
+                ObjectAnimator bullet_translateY = ObjectAnimator.ofFloat(iv_dino, "translationY", (float)(dino_y_before), (float)(dino_y_after), (float)(dino_y_before));
 
-        bullet_translateY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                bullet_center_x = iv_bullet.getX() + bullet_width*0.5f;
-                bullet_center_y = iv_bullet.getY() + bullet_height*0.5f;
+                bullet_translateY.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        bullet_center_x = iv_dino.getX() + bullet_width*0.5f;
+                        bullet_center_y = iv_dino.getY() + bullet_height*0.5f;
 
-                clay_center_x = iv_clay.getX() + clay_width*0.5f;
-                clay_center_y = iv_clay.getY() + clay_height*0.5f;
+                        clay_center_x = iv_clay.getX() + clay_width*0.5f;
+                        clay_center_y = iv_clay.getY() + clay_height*0.5f;
 
-                double dist = Math.sqrt(Math.pow(bullet_center_x - clay_center_x, 2) + Math.pow(bullet_center_y - clay_center_y, 2));
-                if (dist <= 200) {
-                    //iv_clay.setVisibility(View.INVISIBLE);
-                    //bullet.end();
-                    Toast.makeText(getApplicationContext(), "게임 종료!!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                        double dist = Math.sqrt(Math.pow(bullet_center_x - clay_center_x, 2) + Math.pow(bullet_center_y - clay_center_y, 2));
+                        if (dist <= 200) {
+                            //iv_clay.setVisibility(View.INVISIBLE);
+                            //bullet.end();
+                            Toast.makeText(getApplicationContext(), "게임 종료!!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
-        bullet.playTogether(bullet_translateX, bullet_translateY);
-        bullet.setDuration(1300);
-        bullet.start();
+                bullet.playTogether(bullet_translateX, bullet_translateY);
+                bullet.setDuration(1300);
+                bullet.start();
+
+            default:
+                break;
+        }
+        return super.dispatchTouchEvent(event);
     }
 }
